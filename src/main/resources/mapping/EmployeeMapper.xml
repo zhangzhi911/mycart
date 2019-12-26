@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"  >
+<mapper namespace="com.zhangzhi.mapper.EmployeeMapper">
+
+
+    <!--    ???-->
+    <resultMap id="EmployeeMap" type="com.zhangzhi.entity.Employee">
+        <id property="uid" column="uid"></id>
+        <collection property="childrend" column="uid" select="selectBySalary"></collection>
+    </resultMap>
+    <select id="selectBySalary" resultType="com.zhangzhi.entity.Salary">
+SELECT * FROM `t_salary` WHERE uid=#{uid}
+    </select>
+    <!--  ????????  -->
+
+
+    <!--    ????  -->
+    <select id="selectByEmployee" resultMap="EmployeeMap">
+SELECT * FROM `t_employee` WHERE uid =#{uid}
+    </select>
+
+    <!--    ????-->
+    <select id="selectEmployee" resultMap="EmployeeMap">
+SELECT * FROM `t_employee`
+    </select>
+
+    <!--????-->
+    <insert id="insertEmployee" parameterType="com.zhangzhi.entity.Employee">
+INSERT INTO `demo3`.`t_employee` (`uid`, `name`, `mobile`, `department`, `entry_date`)
+ VALUES (#{uid}, #{name}, #{mobile}, #{department}, #{entry_date})
+    </insert>
+
+    <!--????-->
+    <delete id="DeleteEmployee">
+        DELETE FROM `demo3`.`t_employee`
+        WHERE `uid` In
+        <foreach collection="list" open="(" close=")" index="index" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <!--   ??? -->
+    <resultMap id="SalaryMap" type="com.zhangzhi.entity.Salary">
+        <id property="id" column="id"></id>
+    </resultMap>
+    <!--   ??? -->
+    <resultMap id="SalaryViewMap" type="com.zhangzhi.view.SalaryView">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+    </resultMap>
+
+    <!--    ????-->
+    <select id="selectSalary" resultMap="SalaryViewMap" parameterType="com.zhangzhi.view.SalaryView">
+        SELECT t_salary.*,`t_employee`.`name` NAME FROM `t_employee`,`t_salary`
+        <where>
+            `t_employee`.`uid`=`t_salary`.`uid`
+            <if test="name!=null and name!=''">
+                AND t_employee.`name` LIKE concat("%",#{name},"%")
+            </if>
+            <if test="year!=null ">
+                AND t_salary.`year` =#{year}
+            </if>
+            <if test="month!=null">
+                AND t_salary.`month` =#{month}
+            </if>
+        </where>
+
+    </select>
+
+    <!--    ????-->
+    <insert id="insertSalary">
+INSERT INTO `demo3`.`t_salary` ( `uid`, `salary_base`, `salary_subsidy`, `salary_bonus`, `salary_extra`, `year`, `month`)
+VALUES (#{uid}, #{salary_base}, #{salary_subsidy}, #{salary_bonus}, #{salary_extra}, #{year}, #{month})
+    </insert>
+
+</mapper>

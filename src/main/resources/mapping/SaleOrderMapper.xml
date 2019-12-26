@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhangzhi.mapper.SaleOrderMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhangzhi.entity.saleorder" >
+        <id column="salOrId" property="salorid" jdbcType="INTEGER" />
+        <result column="userId" property="userid" jdbcType="INTEGER" />
+        <result column="ordDate" property="orddate" jdbcType="TIMESTAMP" />
+        <result column="totalSum" property="totalsum" jdbcType="DECIMAL" />
+        <result column="province" property="province" jdbcType="DECIMAL" />
+        <result column="city" property="city" jdbcType="DECIMAL" />
+        <result column="area" property="area" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <insert id="insertSelective" parameterType="com.zhangzhi.entity.saleorder" keyProperty="salorid" useGeneratedKeys="true">
+        insert into saleorder
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="salorid != null" >
+                salOrId,
+            </if>
+            <if test="userid != null" >
+                userId,
+            </if>
+            <if test="orddate != null" >
+                ordDate,
+            </if>
+            <if test="totalsum != null" >
+                totalSum,
+            </if>
+            <if test="province != null" >
+                province,
+            </if>
+            <if test="city != null" >
+                city,
+            </if>
+            <if test="area != null" >
+                area,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="salorid != null" >
+                #{salorid,jdbcType=INTEGER},
+            </if>
+            <if test="userid != null" >
+                #{userid,jdbcType=INTEGER},
+            </if>
+            <if test="orddate != null" >
+                #{orddate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="totalsum != null" >
+                #{totalsum,jdbcType=DECIMAL},
+            </if>
+            <if test="province != null" >
+                #{province,jdbcType=DECIMAL},
+            </if>
+            <if test="city != null" >
+                #{city,jdbcType=DECIMAL},
+            </if>
+            <if test="area != null" >
+                #{area,jdbcType=DECIMAL},
+            </if>
+        </trim>
+    </insert>
+
+    <resultMap id="ViewResultMap" type="com.zhangzhi.view.SaleOrderView" >
+        <id column="salOrId" property="salOrId" jdbcType="INTEGER" />
+        <result column="userId" property="userId" jdbcType="INTEGER" />
+        <result column="ordDate" property="ordDate" jdbcType="TIMESTAMP" />
+        <result column="totalSum" property="totalSum" jdbcType="DECIMAL" />
+        <result column="province" property="province" jdbcType="DECIMAL" />
+        <result column="city" property="city" jdbcType="DECIMAL" />
+        <result column="area" property="area" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <sql id="View_Column_List" >
+    o.salOrId, o.userId, o.ordDate, o.totalSum, o.province, o.city, o.area,
+    p.name as provinceName,
+    c.name as cityName,
+    a.name as areaName
+  </sql>
+    <select id="selectBySalOrId" resultMap="ViewResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="View_Column_List" />
+        from saleorder o
+        left join area p on p.id = o.province
+        left join area c on c.id = o.city
+        left join area a on a.id = o.area
+        where o.salOrId = #{salOrId,jdbcType=INTEGER}
+    </select>
+
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhangzhi.mapper.SalDetailMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhangzhi.entity.saldetail">
+        <id column="sDetailId" property="sdetailid" jdbcType="INTEGER"/>
+        <result column="salOrId" property="salorid" jdbcType="INTEGER"/>
+        <result column="gsId" property="gsid" jdbcType="INTEGER"/>
+        <result column="salNum" property="salnum" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <insert id="insertDetails" parameterType="com.zhangzhi.entity.saldetail">
+        insert into saldetail
+        (
+        salOrId,
+        gsId,
+        salNum,
+        amount
+        )
+        values
+        <foreach collection="details" item="detail" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                #{salorid,jdbcType=INTEGER},
+                #{detail.gsid,jdbcType=INTEGER},
+                #{detail.salnum,jdbcType=INTEGER},
+                (select g.price from goods g where g.gsid=#{detail.gsid,jdbcType=INTEGER})* #{detail.salnum,jdbcType=INTEGER}
+            </trim>
+        </foreach>
+    </insert>
+
+    <resultMap id="ViewResultMap" type="com.zhangzhi.view.SalDetailView">
+        <id column="sDetailId" property="sDetailId" jdbcType="INTEGER"/>
+        <result column="salOrId" property="salOrId" jdbcType="INTEGER"/>
+        <result column="gsId" property="gsId" jdbcType="INTEGER"/>
+        <result column="salNum" property="salNum" jdbcType="INTEGER"/>
+
+        <result column="gsName" property="gsName" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="selectByOrderId" resultMap="ViewResultMap" parameterType="java.lang.Integer">
+        select
+        d.sDetailId, d.salOrId, d.gsId, d.salNum, g.name as gsName
+        from saldetail d
+        left join goods g on g.gsId=d.gsId
+        where d.salOrId = #{salOrId,jdbcType=INTEGER}
+    </select>
+
+</mapper>

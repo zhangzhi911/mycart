@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"  >
+<mapper namespace="com.zhangzhi.mapper.MenuMapper">
+    <resultMap id="menuMap" type="com.zhangzhi.view.RoleMenuView">
+        <id property="id" column="gid" />
+        <result property="menuName" column="gname" />
+        <result property="pid" column="gpid" />
+        <result property="checked" column="checked" />
+
+        <collection property="children" ofType="com.zhangzhi.view.RoleMenuView" >
+
+            <id property="id" column="fpid" />
+            <result property="menuName" column="fname" />
+            <result property="pid" column="fpid" />
+            <result property="checked" column="checked" />
+
+            <collection property="children" ofType="com.zhangzhi.view.RoleMenuView" >
+
+                <id property="id" column="menuId" ></id>
+                <result property="menuName" column="menuname" />
+                <result property="pid" column="parentId" />
+                <result property="checked" column="checked" />
+            </collection>
+
+        </collection>
+
+
+    </resultMap>
+
+
+    <select id="selectAll" resultMap="menuMap" parameterType="int">
+    SELECT
+        menu.*,
+        rm.status checked
+    FROM role_menu rm
+    LEFT JOIN
+    (
+        SELECT
+            m1.menuId gid, m1.menuname gname, m1.parentId gpid,
+            m2.menuId fid, m2.menuname fname, m2.parentId fpid,
+            m3.menuId, m3.menuname, m3.parentId
+        FROM menu m1
+        LEFT JOIN menu m2 ON m2.parentId=m1.menuId
+        LEFT JOIN menu m3 ON m3.parentId=m2.menuId
+        WHERE m1.parentId=0
+    ) menu ON menu.gid=rm.menuId OR menu.fid =rm.menuId OR menu.menuId=rm.menuId
+    <if test="id!=null and id!=0">
+        WHERE    rm.roleId=#{id}
+    </if>
+
+  </select>
+
+
+
+</mapper>

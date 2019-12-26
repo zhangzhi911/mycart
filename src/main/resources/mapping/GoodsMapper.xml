@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangzhi.mapper.GoodsMapper">
+  <resultMap id="BaseResultMap" type="com.zhangzhi.entity.Goods">
+    <id column="goods_id" jdbcType="INTEGER" property="goodsId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    goods_id, name, price
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from g_goods
+    where goods_id = #{goodsId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from g_goods
+    where goods_id = #{goodsId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zhangzhi.entity.Goods">
+    insert into g_goods (goods_id, name, price
+      )
+    values (#{goodsId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhangzhi.entity.Goods">
+    insert into g_goods
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="goodsId != null">
+        goods_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="goodsId != null">
+        #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhangzhi.entity.Goods">
+    update g_goods
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where goods_id = #{goodsId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhangzhi.entity.Goods">
+    update g_goods
+    set name = #{name,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DECIMAL}
+    where goods_id = #{goodsId,jdbcType=INTEGER}
+  </update>
+  <select id="findByPage" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    *
+    from g_goods
+    <where>
+      <if test="name != null">
+        name like concat('%', #{name,jdbcType=VARCHAR}, '%')
+      </if>
+    </where>
+  </select>
+</mapper>

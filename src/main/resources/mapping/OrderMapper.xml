@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangzhi.mapper.OrderMapper">
+  <resultMap id="BaseResultMap" type="com.zhangzhi.entity.Order">
+    <id column="order_id" jdbcType="INTEGER" property="orderId" />
+    <result column="create_time" jdbcType="DATE" property="createTime" />
+    <result column="amount" jdbcType="DECIMAL" property="amount" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    order_id, create_time, amount
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from g_order
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from g_order
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zhangzhi.entity.Order" useGeneratedKeys="true" keyProperty="orderId">
+    insert into g_order (order_id, create_time, amount
+      )
+    values (#{orderId,jdbcType=INTEGER}, #{createTime,jdbcType=DATE}, #{amount,jdbcType=DECIMAL}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhangzhi.entity.Order" useGeneratedKeys="true" keyProperty="orderId">
+    insert into g_order
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="orderId != null">
+        order_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="amount != null">
+        amount,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="orderId != null">
+        #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=DATE},
+      </if>
+      <if test="amount != null">
+        #{amount,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhangzhi.entity.Order">
+    update g_order
+    <set>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=DATE},
+      </if>
+      <if test="amount != null">
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhangzhi.entity.Order">
+    update g_order
+    set create_time = #{createTime,jdbcType=DATE},
+      amount = #{amount,jdbcType=DECIMAL}
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </update>
+  <select id="findByPage" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    *
+    from g_order
+  </select>
+</mapper>
