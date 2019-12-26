@@ -16,7 +16,7 @@ public class Employee {
     @JsonFormat(pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date entry_date;
-
+//完成了修改
 
     private List<Salary> childrend;
 }
